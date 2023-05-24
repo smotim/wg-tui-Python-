@@ -1,31 +1,21 @@
-import time
-import curses
+import npyscreen
 
 
-def draw(canvas):
-    row, column = (4, 20)
-    button_row = 3
+class myEmployeeForm(npyscreen.Form):
+    def afterEditing(self):
+        self.parentApp.setNextForm(None)
 
-    # Отрисовка кнопок
-    canvas.addstr(button_row, column, 'Button 1', curses.A_REVERSE)
-    canvas.addstr(button_row, column + 10, 'Button 2', curses.A_REVERSE)
-    canvas.addstr(button_row, column + 20, 'Button 3', curses.A_REVERSE)
+    def create(self):
+        self.myDepartment = self.add(npyscreen.TitleSelectOne, scroll_exit=True, max_height=3, name='Department',
+                                     values=['Указать путь до конфига', 'Установить соединение', 'Проверить соединение'])
+        self.myDate = self.add(npyscreen.TitleDateCombo, name='Date Employed')
 
-    # Отрисовка бокса
-    text_win = curses.newwin(row - 2, canvas.getmaxyx()[1] - 2, 1, 1)
-    text_win.box()
 
-    # Добавление текста в бокс
-    text_win.addstr(1, 1, 'Hello, World!')
-
-    # Отключение курсора
-    curses.curs_set(False)
-
-    # Обновление экрана
-    canvas.refresh()
-    time.sleep(100)
+class MyApplication(npyscreen.NPSAppManaged):
+    def onStart(self):
+        self.addForm('MAIN', myEmployeeForm, name='Wg-tui')
+        # A real application might define more forms here.......
 
 
 if __name__ == '__main__':
-    curses.update_lines_cols()
-    curses.wrapper(draw)
+    TestApp = MyApplication().run()
