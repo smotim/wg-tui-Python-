@@ -1,13 +1,29 @@
+import subprocess
+
 import npyscreen
 
 class FormOne(npyscreen.Form):
     def create(self):
         self.text = self.add(npyscreen.TitleText, name="This is form one")
 
+##Во второй форме реализован пример запуска команды в терминале, в которую подставляется ввод пользователя. После выполнения команды выводится ее результат, но мы потом сможем выводить уже его интерпретацию
 class FormTwo(npyscreen.Form):
     def create(self):
-        self.text = self.add(npyscreen.TitleText, name="This is form two")
+        self.argument = self.add(npyscreen.TitleText, name="Argument:")
+        self.output = self.add(npyscreen.BoxTitle, name="Output:", max_height=10)
+        self.run_button = self.add(npyscreen.ButtonPress, name="Run")
+        self.run_button.whenPressed = self.run_ls
 
+    def run_ls(self):
+        arg = self.argument.value
+        command = f"ls {arg}"
+        output = subprocess.run(command, shell=True, capture_output=True)
+        if output.returncode == 0:
+            result = output.stdout.decode()
+        else:
+            result = output.stderr.decode()
+        self.output.values = result.split("\n")
+        self.display()
 class FormThree(npyscreen.Form):
     def create(self):
         self.text = self.add(npyscreen.TitleText, name="This is form three")
@@ -23,9 +39,10 @@ class FormFive(npyscreen.Form):
 class MenuForm(npyscreen.FormWithMenus):
     def create(self):
         self.text = self.add(npyscreen.TitleText, name="This is the menu form")
+        ##выход в меню не работает почему-то
         menu = self.add_menu(name="Menu", shortcut="^M")
         menu.addItem(text="Form One", onSelect=self.switch_to_form_one)
-        menu.addItem(text="Form Two", onSelect=self.switch_to_form_two)
+        menu.addItem(text="Ls command", onSelect=self.switch_to_form_two)
         menu.addItem(text="Form Three", onSelect=self.switch_to_form_three)
         menu.addItem(text="Form Four", onSelect=self.switch_to_form_four)
         menu.addItem(text="Form Five", onSelect=self.switch_to_form_five)
