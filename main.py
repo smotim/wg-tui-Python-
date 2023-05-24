@@ -10,7 +10,7 @@ class FormOne(npyscreen.Form):
 class FormTwo(npyscreen.Form):
     def create(self):
         self.argument = self.add(npyscreen.TitleText, name="Argument:")
-        self.output = self.add(npyscreen.BoxTitle, name="Output:", max_height=10)
+        self.output = self.add(npyscreen.BoxTitle, name="Output:", max_height=10, editable=False)
         self.run_button = self.add(npyscreen.ButtonPress, name="Run")
         self.run_button.whenPressed = self.run_ls
 
